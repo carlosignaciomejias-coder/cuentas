@@ -41,6 +41,7 @@
                 <div class="flex items-center gap-2">
                     <h1 class="font-bold text-base sm:text-lg tracking-tight text-white">Balances 2026</h1>
                     <span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-indigo-500/20 text-indigo-400 border border-indigo-500/30">CLP $</span>
+                    <span id="cloudStatusBadge" class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-amber-500/20 text-amber-400 border border-amber-500/30 hidden">Nube Sincronizada</span>
                 </div>
                 <p class="text-xs text-slate-400 hidden sm:block">Control mensual de gastos fijos, variables, TAG, Entel y créditos</p>
             </div>
@@ -51,28 +52,15 @@
             <button onclick="openCencoModal()" class="px-3 py-1.5 rounded-xl text-xs font-semibold bg-purple-600/20 hover:bg-purple-600/30 text-purple-300 border border-purple-500/30 transition flex items-center gap-1.5">
                 <i class="fa-solid fa-credit-card text-purple-400"></i> Tarjeta Papás (CENCO)
             </button>
-            <button onclick="openPasteModal()" class="px-3 py-1.5 rounded-xl text-xs font-semibold bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-300 border border-emerald-500/30 transition flex items-center gap-1.5" title="Copiar celdas en Google Sheets y pegarlas aquí">
+            <button onclick="openPasteModal()" class="px-3 py-1.5 rounded-xl text-xs font-semibold bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-300 border border-emerald-500/30 transition flex items-center gap-1.5" title="Pegar datos desde Google Sheets">
                 <i class="fa-solid fa-file-excel text-emerald-400"></i> Pegar desde Sheets
             </button>
-            <button onclick="document.getElementById('csvFileInput').click()" class="px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition flex items-center gap-1.5">
-                <i class="fa-solid fa-file-arrow-up text-indigo-400"></i> Importar CSV(s)
-            </button>
-            <input type="file" id="csvFileInput" accept=".csv" multiple class="hidden" onchange="handleCsvImport(event)">
-            
             <button onclick="exportCSV()" class="px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition flex items-center gap-1.5" title="Exportar mes activo a CSV">
                 <i class="fa-solid fa-file-arrow-down text-emerald-400"></i> Exportar CSV
             </button>
-            <button onclick="exportJSON()" class="px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition flex items-center gap-1.5" title="Respaldo completo de todos los meses">
+            <button onclick="exportJSON()" class="px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition flex items-center gap-1.5" title="Respaldo JSON">
                 <i class="fa-solid fa-database text-amber-400"></i> Respaldo JSON
             </button>
-            <button onclick="document.getElementById('jsonFileInput').click()" class="px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition flex items-center gap-1.5">
-                <i class="fa-solid fa-cloud-arrow-up text-sky-400"></i> Cargar JSON
-            </button>
-            <input type="file" id="jsonFileInput" accept=".json" class="hidden" onchange="handleJsonImport(event)">
-
-            <a href="https://github.com" target="_blank" rel="noopener noreferrer" class="px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition flex items-center gap-1.5" title="Alojamiento en GitHub Pages">
-                <i class="fa-brands fa-github"></i> GitHub Pages
-            </a>
             <button onclick="toggleDarkMode()" class="w-8 h-8 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center transition" title="Cambiar tema">
                 <i id="darkModeIcon" class="fa-solid fa-moon text-xs"></i>
             </button>
@@ -147,11 +135,11 @@
                 </div>
             </div>
 
-            <!-- Ingreso / Disponible -->
+            <!-- Ingreso / Disponible Diversificado -->
             <div class="p-4 rounded-2xl bg-slate-800/60 border border-slate-700/60 backdrop-blur flex flex-col justify-between">
                 <div class="flex items-center justify-between text-slate-400 text-xs font-semibold uppercase">
-                    <span>Ingreso / Disponible</span>
-                    <button onclick="openIngresoModal()" class="text-indigo-400 hover:text-indigo-300 text-xs font-semibold"><i class="fa-solid fa-pen mr-1"></i>Editar</button>
+                    <span>Ingresos / Disponible</span>
+                    <button onclick="openIngresosModal()" class="text-indigo-400 hover:text-indigo-300 text-xs font-semibold"><i class="fa-solid fa-wallet mr-1"></i>Gestionar</button>
                 </div>
                 <div class="mt-3">
                     <div id="kpiIngreso" class="text-2xl font-bold text-sky-400 tracking-tight">$0</div>
@@ -171,17 +159,15 @@
                         </span>
                         <span id="groupEntelTotal" class="text-sm font-bold text-white">$0</span>
                     </div>
-                    <p class="text-[11px] text-slate-400 mb-3">Suma automática de conceptos asociados a la boleta Entel (V 06 de cada mes)</p>
-                    <div id="groupEntelList" class="space-y-1.5 text-xs">
-                        <!-- Populated by JS -->
-                    </div>
+                    <p class="text-[11px] text-slate-400 mb-3">Suma automática de conceptos asociados a la boleta Entel</p>
+                    <div id="groupEntelList" class="space-y-1.5 text-xs"></div>
                 </div>
                 <div class="mt-3 pt-2.5 border-t border-blue-200/10 flex flex-wrap items-center justify-between gap-2">
                     <a href="https://miperfil.entel.cl/" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 text-[11px] font-semibold text-blue-400 hover:underline">
-                        <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i> Ir a Mi Entel
+                        <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i> Mi Entel
                     </a>
                     <button onclick="paySmartGroup('entel')" class="px-2.5 py-1 rounded-lg text-[11px] font-semibold bg-blue-600 hover:bg-blue-500 text-white transition">
-                        <i class="fa-solid fa-check mr-1"></i>Marcar Pagada
+                        <i class="fa-solid fa-check mr-1"></i>Pagar Boleta
                     </button>
                 </div>
             </div>
@@ -196,19 +182,12 @@
                         <span id="groupTagTotal" class="text-sm font-bold text-white">$0</span>
                     </div>
                     <p class="text-[11px] text-slate-400 mb-3">Desglose de pórticos TAG + Bencina / Bip del mes</p>
-                    <div id="groupTagList" class="space-y-1.5 text-xs">
-                        <!-- Populated by JS -->
-                    </div>
+                    <div id="groupTagList" class="space-y-1.5 text-xs"></div>
                 </div>
                 <div class="mt-3 pt-2.5 border-t border-amber-200/10 flex flex-wrap items-center justify-between gap-2">
-                    <div class="flex items-center gap-2">
-                        <span id="groupTagOnlyTotal" class="text-[11px] text-slate-400">TAG: $0</span>
-                        <a href="https://www.pasaste.cl/" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 text-[11px] font-semibold text-amber-400 hover:underline">
-                            <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i> Portal TAG
-                        </a>
-                    </div>
+                    <span id="groupTagOnlyTotal" class="text-[11px] text-slate-400">TAG: $0</span>
                     <button onclick="paySmartGroup('tag')" class="px-2.5 py-1 rounded-lg text-[11px] font-semibold bg-amber-600 hover:bg-amber-500 text-white transition">
-                        <i class="fa-solid fa-check mr-1"></i>Marcar TAG
+                        <i class="fa-solid fa-check mr-1"></i>Pagar TAG
                     </button>
                 </div>
             </div>
@@ -223,9 +202,7 @@
                         <span id="groupCreditTotal" class="text-sm font-bold text-white">$0</span>
                     </div>
                     <p class="text-[11px] text-slate-400 mb-3">Progreso, término estimado y saldo futuro de créditos</p>
-                    <div id="groupCreditList" class="space-y-2 text-xs">
-                        <!-- Populated by JS -->
-                    </div>
+                    <div id="groupCreditList" class="space-y-2 text-xs"></div>
                 </div>
                 <div class="mt-3 pt-2.5 border-t border-indigo-200/10 flex items-center justify-between text-[11px] text-slate-400">
                     <span>Deuda futura restante:</span>
@@ -242,14 +219,12 @@
                         </span>
                         <span id="groupCencoTotal" class="text-sm font-bold text-white">$352.000</span>
                     </div>
-                    <p class="text-[11px] text-slate-400 mb-2">Control mensual Tarjeta Papás (Cynthia / Carlos) y Cencosud Magda</p>
-                    <div id="groupCencoContent" class="space-y-2 text-xs">
-                        <!-- Populated by JS -->
-                    </div>
+                    <p class="text-[11px] text-slate-400 mb-2">Control Tarjeta Papás (Cynthia / Carlos) y Cencosud Magda</p>
+                    <div id="groupCencoContent" class="space-y-2 text-xs"></div>
                 </div>
                 <div class="mt-3 pt-2.5 border-t border-purple-200/10 flex items-center justify-between gap-2">
                     <a href="https://www.tarjetacencosud.cl/" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 text-[11px] font-semibold text-purple-400 hover:underline">
-                        <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i> Web Cencosud
+                        <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i> Cencosud
                     </a>
                     <button onclick="openCencoModal()" class="px-2.5 py-1 rounded-lg text-[11px] font-semibold bg-purple-600 hover:bg-purple-500 text-white transition">
                         <i class="fa-solid fa-calendar-days mr-1"></i>Planilla 2026–2030
@@ -271,7 +246,7 @@
                         <option value="todos">Todos los estados</option>
                         <option value="pendiente">Pendientes (Por pagar)</option>
                         <option value="pagado">Pagados ✓</option>
-                        <option value="vencido">⚠️ Vencidos o próximos (3 días)</option>
+                        <option value="vencido">⚠️ Vencidos o próximos</option>
                     </select>
                     <select id="filterTipo" onchange="renderApp()" class="bg-slate-900 border border-slate-700 rounded-xl px-3 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-indigo-500">
                         <option value="todos">Fijos y Variables</option>
@@ -300,14 +275,12 @@
                             <th class="py-3 px-4 text-right">Pagado</th>
                             <th class="py-3 px-4 text-right">Por pagar</th>
                             <th class="py-3 px-4">Tipo de costo</th>
-                            <th class="py-3 px-4">Cargo o Vence</th>
+                            <th class="py-3 px-4">Cargo o Vence (Noviembre)</th>
                             <th class="py-3 px-4">Comentario</th>
                             <th class="py-3 px-4 text-center w-28">Acciones</th>
                         </tr>
                     </thead>
-                    <tbody id="tableBody" class="divide-y divide-slate-700/40 text-xs">
-                        <!-- Poblado por JS -->
-                    </tbody>
+                    <tbody id="tableBody" class="divide-y divide-slate-700/40 text-xs"></tbody>
                     <tfoot>
                         <tr class="bg-slate-900/80 font-bold text-xs border-t border-slate-700">
                             <td class="py-3 px-4 text-center">TOTAL</td>
@@ -322,7 +295,7 @@
             </div>
         </section>
 
-        <!-- Paneles Inferiores: Gráfico comparativo y Cronograma -->
+        <!-- Paneles Inferiores -->
         <section class="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <!-- Comparativa Anual -->
             <div class="p-5 rounded-2xl bg-slate-800/50 border border-slate-700/60 backdrop-blur flex flex-col justify-between">
@@ -333,26 +306,52 @@
                         <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-purple-500"></span> Variable</span>
                     </div>
                 </div>
-                <div id="chartContainer" class="h-48 flex items-end gap-2 pt-6 pb-2 px-2 border-b border-slate-700/60">
-                    <!-- Barras generadas por JS -->
-                </div>
-                <p class="text-[11px] text-slate-400 mt-3 text-center">Haz clic en cualquier barra para saltar directamente a ese mes</p>
+                <div id="chartContainer" class="h-48 flex items-end gap-2 pt-6 pb-2 px-2 border-b border-slate-700/60"></div>
+                <p class="text-[11px] text-slate-400 mt-3 text-center">Haz clic en cualquier barra para saltar al mes</p>
             </div>
 
             <!-- Cronograma de Vencimientos -->
             <div class="p-5 rounded-2xl bg-slate-800/50 border border-slate-700/60 backdrop-blur flex flex-col justify-between">
                 <div class="flex items-center justify-between mb-3">
-                    <h3 class="text-xs font-bold uppercase tracking-wider text-slate-300">Cronograma de Vencimientos del Mes</h3>
+                    <h3 class="text-xs font-bold uppercase tracking-wider text-slate-300">Cronograma de Vencimientos (Noviembre)</h3>
                     <span id="currentDayBadge" class="px-2.5 py-1 rounded-lg text-xs font-semibold bg-slate-900 border border-slate-700 text-slate-300">Día actual: 17</span>
                 </div>
-                <p class="text-[11px] text-slate-400 mb-3">Pagos ordenados según día de vencimiento (V) o cargo automático (C)</p>
-                <div id="cronogramaList" class="space-y-2 max-h-48 overflow-y-auto custom-scrollbar pr-1">
-                    <!-- Poblado por JS -->
-                </div>
+                <p class="text-[11px] text-slate-400 mb-3">Pagos de Octubre con vencimiento en Noviembre</p>
+                <div id="cronogramaList" class="space-y-2 max-h-48 overflow-y-auto custom-scrollbar pr-1"></div>
             </div>
         </section>
-
     </main>
+
+    <!-- MODAL: Ingresos Diversificados -->
+    <div id="ingresosModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-lg w-full p-6 shadow-2xl relative">
+            <button onclick="closeModal('ingresosModal')" class="absolute top-5 right-5 text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+            <h3 class="text-base font-bold text-white mb-1">Ingresos Diversificados del Mes</h3>
+            <p id="ingresosModalSubtitle" class="text-xs text-slate-400 mb-4">Registra y clasifica tus fuentes de ingresos para este periodo.</p>
+            
+            <div class="space-y-3 mb-4 max-h-60 overflow-y-auto custom-scrollbar pr-1" id="ingresosListContainer">
+                <!-- Poblado por JS -->
+            </div>
+
+            <div class="p-3 rounded-2xl bg-slate-800/60 border border-slate-700/60 grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
+                <div>
+                    <label class="block text-[10px] font-semibold uppercase text-slate-400 mb-1">Fuente / Categoría</label>
+                    <input id="newIngresoSource" type="text" placeholder="Ej: Sueldo Carlos, Inversiones..." class="w-full px-3 py-1.5 rounded-xl text-xs bg-slate-900 border border-slate-700 focus:border-indigo-500 outline-none text-white">
+                </div>
+                <div>
+                    <label class="block text-[10px] font-semibold uppercase text-slate-400 mb-1">Monto (CLP $)</label>
+                    <div class="flex gap-2">
+                        <input id="newIngresoAmount" type="number" min="0" placeholder="Ej: 1200000" class="w-full px-3 py-1.5 rounded-xl text-xs bg-slate-900 border border-slate-700 focus:border-indigo-500 outline-none text-white font-bold">
+                        <button onclick="addIngresoItem()" class="px-3 py-1.5 rounded-xl text-xs font-semibold bg-emerald-600 hover:bg-emerald-500 text-white"><i class="fa-solid fa-plus"></i></button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex justify-end gap-2 pt-3 border-t border-slate-800">
+                <button onclick="closeModal('ingresosModal')" class="px-4 py-2 rounded-xl text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-300">Cerrar</button>
+            </div>
+        </div>
+    </div>
 
     <!-- MODAL: Agregar / Editar Concepto -->
     <div id="itemModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
@@ -363,34 +362,34 @@
                 <input type="hidden" id="editItemIndex" value="-1">
                 <div class="sm:col-span-2">
                     <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Concepto</label>
-                    <input id="formConcepto" type="text" required placeholder="Ej: Itaú Alberto, Bencina, Entel..." class="w-full px-3 py-2 rounded-xl text-xs bg-slate-800 border border-slate-700 focus:border-indigo-500 outline-none">
+                    <input id="formConcepto" type="text" required placeholder="Ej: Itaú Alberto, Bencina..." class="w-full px-3 py-2 rounded-xl text-xs bg-slate-800 border border-slate-700 focus:border-indigo-500 outline-none text-white">
                 </div>
                 <div>
                     <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Valor (CLP $)</label>
-                    <input id="formValor" type="number" min="0" placeholder="Ej: 344370" class="w-full px-3 py-2 rounded-xl text-xs bg-slate-800 border border-slate-700 focus:border-indigo-500 outline-none">
+                    <input id="formValor" type="number" min="0" placeholder="Ej: 344370" class="w-full px-3 py-2 rounded-xl text-xs bg-slate-800 border border-slate-700 focus:border-indigo-500 outline-none text-white">
                 </div>
                 <div>
                     <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Pagado (CLP $)</label>
-                    <input id="formPagado" type="number" min="0" placeholder="0" class="w-full px-3 py-2 rounded-xl text-xs bg-slate-800 border border-slate-700 focus:border-indigo-500 outline-none">
+                    <input id="formPagado" type="number" min="0" placeholder="0" class="w-full px-3 py-2 rounded-xl text-xs bg-slate-800 border border-slate-700 focus:border-indigo-500 outline-none text-white">
                 </div>
                 <div>
                     <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Tipo de Costo</label>
-                    <select id="formTipo" class="w-full px-3 py-2 rounded-xl text-xs bg-slate-800 border border-slate-700 focus:border-indigo-500 outline-none">
+                    <select id="formTipo" class="w-full px-3 py-2 rounded-xl text-xs bg-slate-800 border border-slate-700 focus:border-indigo-500 outline-none text-white">
                         <option value="Fijo">Fijo</option>
                         <option value="Variable">Variable</option>
                     </select>
                 </div>
                 <div>
                     <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Cargo o Vence</label>
-                    <input id="formVence" type="text" placeholder="Ej: V 3 de cada mes, Desc. por planilla" class="w-full px-3 py-2 rounded-xl text-xs bg-slate-800 border border-slate-700 focus:border-indigo-500 outline-none">
+                    <input id="formVence" type="text" placeholder="Ej: V 3 de cada mes" class="w-full px-3 py-2 rounded-xl text-xs bg-slate-800 border border-slate-700 focus:border-indigo-500 outline-none text-white">
                 </div>
                 <div class="sm:col-span-2">
                     <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Comentario / Cuota</label>
-                    <input id="formComentario" type="text" placeholder="Ej: octubre 9/60, Cuenta entel, Se carga a Spin..." class="w-full px-3 py-2 rounded-xl text-xs bg-slate-800 border border-slate-700 focus:border-indigo-500 outline-none">
+                    <input id="formComentario" type="text" placeholder="Ej: octubre 9/60, Se carga a Spin..." class="w-full px-3 py-2 rounded-xl text-xs bg-slate-800 border border-slate-700 focus:border-indigo-500 outline-none text-white">
                 </div>
                 <div class="sm:col-span-2">
-                    <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Link de Pago (Opcional - se detecta automáticamente si lo dejas vacío)</label>
-                    <input id="formUrlPago" type="url" placeholder="https://..." class="w-full px-3 py-2 rounded-xl text-xs bg-slate-800 border border-slate-700 focus:border-indigo-500 outline-none">
+                    <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Link de Pago (Opcional)</label>
+                    <input id="formUrlPago" type="url" placeholder="https://..." class="w-full px-3 py-2 rounded-xl text-xs bg-slate-800 border border-slate-700 focus:border-indigo-500 outline-none text-white">
                 </div>
                 <div class="sm:col-span-2 flex items-center gap-2 pt-1">
                     <input id="formEstado" type="checkbox" class="w-4 h-4 rounded text-emerald-500 focus:ring-emerald-500 bg-slate-800 border-slate-700">
@@ -404,32 +403,13 @@
         </div>
     </div>
 
-    <!-- MODAL: Editar Ingreso del Mes -->
-    <div id="ingresoModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
-        <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-md w-full p-6 shadow-2xl relative">
-            <button onclick="closeModal('ingresoModal')" class="absolute top-5 right-5 text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
-            <h3 class="text-base font-bold text-white mb-2">Ingreso / Presupuesto del Mes</h3>
-            <p id="ingresoModalSubtitle" class="text-xs text-slate-400 mb-4">Define el ingreso total disponible para el mes activo.</p>
-            <div class="space-y-4">
-                <div>
-                    <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Monto de Ingreso (CLP $)</label>
-                    <input id="formIngresoInput" type="number" min="0" placeholder="Ej: 1500000" class="w-full px-3 py-2 rounded-xl text-xs bg-slate-800 border border-slate-700 focus:border-indigo-500 outline-none text-white font-bold text-base">
-                </div>
-                <div class="flex justify-end gap-2 pt-2">
-                    <button onclick="closeModal('ingresoModal')" class="px-4 py-2 rounded-xl text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-300">Cancelar</button>
-                    <button onclick="saveIngreso()" class="px-4 py-2 rounded-xl text-xs font-semibold bg-indigo-600 hover:bg-indigo-500 text-white">Guardar Ingreso</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <!-- MODAL: Pegar desde Google Sheets -->
     <div id="pasteModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
         <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-xl w-full p-6 shadow-2xl relative">
             <button onclick="closeModal('pasteModal')" class="absolute top-5 right-5 text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
             <h3 class="text-base font-bold text-white mb-2">Pegar Datos desde Google Sheets</h3>
-            <p class="text-xs text-slate-400 mb-3">Copia las filas de tu Google Sheet (Columnas: Estado, Concepto, Valor, Pagado, Por pagar, Tipo de costo, Cargo o Vence, Comentario) y pégalas aquí abajo:</p>
-            <textarea id="pasteTextArea" rows="8" placeholder="Haz clic aquí y presiona Ctrl+V para pegar tus datos..." class="w-full p-3 bg-slate-800 border border-slate-700 rounded-xl text-xs text-slate-200 focus:outline-none focus:border-emerald-500 font-mono"></textarea>
+            <p class="text-xs text-slate-400 mb-3">Copia las filas de tu Google Sheet y pégalas aquí abajo:</p>
+            <textarea id="pasteTextArea" rows="8" placeholder="Haz clic aquí y presiona Ctrl+V..." class="w-full p-3 bg-slate-800 border border-slate-700 rounded-xl text-xs text-slate-200 focus:outline-none focus:border-emerald-500 font-mono"></textarea>
             <div class="flex justify-end gap-2 pt-3">
                 <button onclick="closeModal('pasteModal')" class="px-4 py-2 rounded-xl text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-300">Cancelar</button>
                 <button onclick="processPastedData()" class="px-4 py-2 rounded-xl text-xs font-semibold bg-emerald-600 hover:bg-emerald-500 text-white">Importar al Mes Activo</button>
@@ -437,13 +417,13 @@
         </div>
     </div>
 
-    <!-- MODAL: Planilla Tarjeta Papás (CENCO) 2026-2030 -->
+    <!-- MODAL: Planilla Tarjeta Papás (CENCO) -->
     <div id="cencoModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
         <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-4xl w-full max-h-[90vh] flex flex-col shadow-2xl relative">
             <div class="p-6 border-b border-slate-800 flex items-center justify-between">
                 <div>
                     <h3 class="text-base font-bold text-white">Planilla Histórica Tarjeta Papás (CENCO) • 2026–2030</h3>
-                    <p class="text-xs text-slate-400">Seguimiento de cuotas, Cynthia ($176.000) y Carlos ($176.000)</p>
+                    <p class="text-xs text-slate-400">Seguimiento de cuotas, Cynthia y Carlos</p>
                 </div>
                 <button onclick="closeModal('cencoModal')" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
             </div>
@@ -460,9 +440,7 @@
                                 <th class="py-2.5 px-3 text-right">Monto Carlos</th>
                             </tr>
                         </thead>
-                        <tbody id="cencoTableBody" class="divide-y divide-slate-800">
-                            <!-- Poblado por JS -->
-                        </tbody>
+                        <tbody id="cencoTableBody" class="divide-y divide-slate-800"></tbody>
                     </table>
                 </div>
             </div>
@@ -479,12 +457,20 @@
         <span id="toastMsg">Acción realizada con éxito</span>
     </div>
 
-    <!-- Script de la Aplicación -->
-    <script>
-        // Clave de almacenamiento local
-        const STORAGE_KEY = 'BALANCES_2026_APP_STATE_V3';
+    <!-- Firebase SDKs -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // Estructura base precargada con datos de Google Sheets (Abril a Octubre 2026)
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'balances-2026-app';
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : null;
+
+        window.isCloudConnected = false;
+        let db = null;
+        let auth = null;
+        let unsubscribe = null;
+
         const DEFAULT_SHEETS_DATA = {
             "Abril 2026": [
                 { estado: false, concepto: "Itaú Alberto", valor: 344370, pagado: 0, tipo: "Fijo", vence: "V 3 de cada mes", comentario: "abril 8/60", incluidoTarjeta: false, urlPago: "" },
@@ -554,26 +540,18 @@
             ],
             "Octubre 2026": [
                 { estado: false, concepto: "Itaú Alberto", valor: 344370, pagado: 0, tipo: "Fijo", vence: "V 3 de cada mes", comentario: "octubre 9/60", incluidoTarjeta: false, urlPago: "" },
-                { estado: false, concepto: "Préstamo Magdita", valor: 0, pagado: 0, tipo: "Variable", vence: "", comentario: "", incluidoTarjeta: false, urlPago: "" },
-                { estado: false, concepto: "Cencosud Magda", valor: 205753, pagado: 0, tipo: "Variable", vence: "V 11de cada mes", comentario: "octubre 4/48", incluidoTarjeta: false, urlPago: "" },
-                { estado: false, concepto: "Cynthia", valor: 0, pagado: 0, tipo: "Variable", vence: "", comentario: "", incluidoTarjeta: false, urlPago: "" },
-                { estado: false, concepto: "Corte de pelo", valor: 12000, pagado: 0, tipo: "Fijo", vence: "", comentario: "", incluidoTarjeta: false, urlPago: "" },
+                { estado: false, concepto: "Cencosud Magda", valor: 205753, pagado: 0, tipo: "Variable", vence: "V 11 de cada mes", comentario: "octubre 4/48", incluidoTarjeta: false, urlPago: "" },
                 { estado: false, concepto: "Vespucio Sur", valor: 3971, pagado: 0, tipo: "Variable", vence: "V 27 de cada mes", comentario: "", incluidoTarjeta: false, urlPago: "" },
-                { estado: false, concepto: "Vespucio Oriente (AVO1)", valor: 0, pagado: 0, tipo: "Variable", vence: "V 07 de cada mes", comentario: "", incluidoTarjeta: false, urlPago: "" },
                 { estado: false, concepto: "Vespucio Norte", valor: 9460, pagado: 0, tipo: "Variable", vence: "V 07 de cada mes", comentario: "", incluidoTarjeta: false, urlPago: "" },
                 { estado: false, concepto: "Rutapass (78/55/68)", valor: 11586, pagado: 0, tipo: "Variable", vence: "V 30 de cada mes", comentario: "", incluidoTarjeta: false, urlPago: "" },
                 { estado: false, concepto: "Autopista central", valor: 7843, pagado: 0, tipo: "Variable", vence: "V 10 de cada mes", comentario: "", incluidoTarjeta: false, urlPago: "" },
                 { estado: false, concepto: "Costanera Norte", valor: 9818, pagado: 0, tipo: "Variable", vence: "V 06 de cada mes", comentario: "", incluidoTarjeta: false, urlPago: "" },
                 { estado: false, concepto: "Bencina", valor: 100000, pagado: 0, tipo: "Fijo", vence: "", comentario: "", incluidoTarjeta: false, urlPago: "" },
-                { estado: false, concepto: "Tarjeta Bip", valor: 0, pagado: 0, tipo: "Fijo", vence: "", comentario: "", incluidoTarjeta: false, urlPago: "" },
-                { estado: false, concepto: "Plan entel", valor: 16990, pagado: 0, tipo: "Fijo", vence: "V 06 de cada mes", comentario: "Cuenta entel Total entel: 50268", incluidoTarjeta: false, urlPago: "" },
+                { estado: false, concepto: "Plan entel", valor: 16990, pagado: 0, tipo: "Fijo", vence: "V 06 de cada mes", comentario: "Cuenta entel", incluidoTarjeta: false, urlPago: "" },
                 { estado: false, concepto: "Youtube", valor: 11000, pagado: 0, tipo: "Fijo", vence: "", comentario: "Cuenta entel", incluidoTarjeta: false, urlPago: "" },
                 { estado: false, concepto: "Netflix", valor: 12990, pagado: 0, tipo: "Fijo", vence: "", comentario: "Cuenta entel", incluidoTarjeta: false, urlPago: "" },
-                { estado: false, concepto: "Notes", valor: 0, pagado: 0, tipo: "Fijo", vence: "", comentario: "", incluidoTarjeta: false, urlPago: "" },
-                { estado: false, concepto: "Google AI plus", valor: 8990, pagado: 0, tipo: "Fijo", vence: "", comentario: "Cuenta entel: Desde octubre 8990", incluidoTarjeta: false, urlPago: "" },
+                { estado: false, concepto: "Google AI plus", valor: 8990, pagado: 0, tipo: "Fijo", vence: "", comentario: "Cuenta entel", incluidoTarjeta: false, urlPago: "" },
                 { estado: false, concepto: "Zapping", valor: 18900, pagado: 0, tipo: "Fijo", vence: "C 08 de cada mes", comentario: "Se carga a Spin", incluidoTarjeta: true, urlPago: "" },
-                { estado: false, concepto: "Spotify familiar", valor: 0, pagado: 0, tipo: "Fijo", vence: "", comentario: "", incluidoTarjeta: false, urlPago: "" },
-                { estado: false, concepto: "Psicóloga", valor: 43000, pagado: 0, tipo: "Fijo", vence: "", comentario: "", incluidoTarjeta: false, urlPago: "" },
                 { estado: false, concepto: "Psicóloga", valor: 43000, pagado: 0, tipo: "Fijo", vence: "", comentario: "", incluidoTarjeta: false, urlPago: "" },
                 { estado: false, concepto: "Tarjeta Spin", valor: 250000, pagado: 0, tipo: "Variable", vence: "V 04 de cada mes", comentario: "", incluidoTarjeta: false, urlPago: "" },
                 { estado: false, concepto: "Tarjeta CMR", valor: 90000, pagado: 0, tipo: "Variable", vence: "V 05 de cada mes", comentario: "", incluidoTarjeta: false, urlPago: "" },
@@ -583,7 +561,6 @@
             ]
         };
 
-        // Planilla Tarjeta Papás (CENCO) 2026-2030 precargada con datos reales
         const CENCO_SCHEDULE_DATA = [
             { mes: "04/2026", cuota: 384746, cynthiaPago: true, cynthiaMonto: 192373, carlosPago: true, carlosMonto: 192373 },
             { mes: "05/2026", cuota: 0, cynthiaPago: true, cynthiaMonto: "REPACTACIÓN", carlosPago: true, carlosMonto: "REPACTACIÓN" },
@@ -596,60 +573,97 @@
             { mes: "12/2026", cuota: 352000, cynthiaPago: false, cynthiaMonto: 176000, carlosPago: false, carlosMonto: 176000 },
             { mes: "01/2027", cuota: 352000, cynthiaPago: false, cynthiaMonto: 176000, carlosPago: false, carlosMonto: 176000 },
             { mes: "02/2027", cuota: 352000, cynthiaPago: false, cynthiaMonto: 176000, carlosPago: false, carlosMonto: 176000 },
-            { mes: "03/2027", cuota: 352000, cynthiaPago: false, cynthiaMonto: 176000, carlosPago: false, carlosMonto: 176000 },
-            { mes: "04/2027", cuota: 352000, cynthiaPago: false, cynthiaMonto: 176000, carlosPago: false, carlosMonto: 176000 },
-            { mes: "05/2027", cuota: 352000, cynthiaPago: false, cynthiaMonto: 176000, carlosPago: false, carlosMonto: 176000 },
-            { mes: "06/2027", cuota: 352000, cynthiaPago: false, cynthiaMonto: 176000, carlosPago: false, carlosMonto: 176000 },
-            { mes: "07/2027", cuota: 352000, cynthiaPago: false, cynthiaMonto: 176000, carlosPago: false, carlosMonto: 176000 },
-            { mes: "08/2027", cuota: 352000, cynthiaPago: false, cynthiaMonto: 176000, carlosPago: false, carlosMonto: 176000 },
-            { mes: "09/2027", cuota: 352000, cynthiaPago: false, cynthiaMonto: 176000, carlosPago: false, carlosMonto: 176000 },
-            { mes: "10/2027", cuota: 352000, cynthiaPago: false, cynthiaMonto: 176000, carlosPago: false, carlosMonto: 176000 },
-            { mes: "11/2027", cuota: 352000, cynthiaPago: false, cynthiaMonto: 176000, carlosPago: false, carlosMonto: 176000 },
-            { mes: "12/2027", cuota: 352000, cynthiaPago: false, cynthiaMonto: 176000, carlosPago: false, carlosMonto: 176000 },
-            { mes: "01/2028", cuota: 352000, cynthiaPago: false, cynthiaMonto: 176000, carlosPago: false, carlosMonto: 176000 },
-            { mes: "02/2028", cuota: 352000, cynthiaPago: false, cynthiaMonto: 176000, carlosPago: false, carlosMonto: 176000 },
-            { mes: "03/2028", cuota: 352000, cynthiaPago: false, cynthiaMonto: 176000, carlosPago: false, carlosMonto: 176000 },
-            { mes: "04/2028", cuota: 352000, cynthiaPago: false, cynthiaMonto: 176000, carlosPago: false, carlosMonto: 176000 },
-            { mes: "05/2028", cuota: 352000, cynthiaPago: false, cynthiaMonto: 176000, carlosPago: false, carlosMonto: 176000 },
-            { mes: "06/2028", cuota: 352000, cynthiaPago: false, cynthiaMonto: 176000, carlosPago: false, carlosMonto: 176000 },
-            { mes: "07/2028", cuota: 352000, cynthiaPago: false, cynthiaMonto: 176000, carlosPago: false, carlosMonto: 176000 },
-            { mes: "08/2028", cuota: 352000, cynthiaPago: false, cynthiaMonto: 176000, carlosPago: false, carlosMonto: 176000 },
-            { mes: "09/2028", cuota: 352000, cynthiaPago: false, cynthiaMonto: 176000, carlosPago: false, carlosMonto: 176000 },
-            { mes: "10/2028", cuota: 352000, cynthiaPago: false, cynthiaMonto: 176000, carlosPago: false, carlosMonto: 176000 },
-            { mes: "11/2028", cuota: 352000, cynthiaPago: false, cynthiaMonto: 176000, carlosPago: false, carlosMonto: 176000 },
-            { mes: "12/2028", cuota: 352000, cynthiaPago: false, cynthiaMonto: 176000, carlosPago: false, carlosMonto: 176000 },
-            { mes: "01/2029", cuota: 352000, cynthiaPago: false, cynthiaMonto: 0, carlosPago: false, carlosMonto: 352000 },
-            { mes: "02/2029", cuota: 352000, cynthiaPago: false, cynthiaMonto: 0, carlosPago: false, carlosMonto: 352000 },
-            { mes: "03/2029", cuota: 352000, cynthiaPago: false, cynthiaMonto: 0, carlosPago: false, carlosMonto: 352000 },
-            { mes: "04/2029", cuota: 352000, cynthiaPago: false, cynthiaMonto: 0, carlosPago: false, carlosMonto: 352000 },
-            { mes: "05/2029", cuota: 352000, cynthiaPago: false, cynthiaMonto: 0, carlosPago: false, carlosMonto: 352000 },
-            { mes: "06/2029", cuota: 352000, cynthiaPago: false, cynthiaMonto: 0, carlosPago: false, carlosMonto: 352000 },
-            { mes: "07/2029", cuota: 352000, cynthiaPago: false, cynthiaMonto: 0, carlosPago: false, carlosMonto: 352000 },
-            { mes: "08/2029", cuota: 352000, cynthiaPago: false, cynthiaMonto: 0, carlosPago: false, carlosMonto: 352000 },
-            { mes: "09/2029", cuota: 352000, cynthiaPago: false, cynthiaMonto: 0, carlosPago: false, carlosMonto: 352000 },
-            { mes: "10/2029", cuota: 352000, cynthiaPago: false, cynthiaMonto: 0, carlosPago: false, carlosMonto: 352000 },
-            { mes: "11/2029", cuota: 352000, cynthiaPago: false, cynthiaMonto: 0, carlosPago: false, carlosMonto: 352000 },
-            { mes: "12/2029", cuota: 352000, cynthiaPago: false, cynthiaMonto: 0, carlosPago: false, carlosMonto: 352000 },
-            { mes: "01/2030", cuota: 352000, cynthiaPago: false, cynthiaMonto: 0, carlosPago: false, carlosMonto: 352000 },
-            { mes: "02/2030", cuota: 352000, cynthiaPago: false, cynthiaMonto: 0, carlosPago: false, carlosMonto: 352000 },
-            { mes: "03/2030", cuota: 352000, cynthiaPago: false, cynthiaMonto: 0, carlosPago: false, carlosMonto: 352000 },
-            { mes: "04/2030", cuota: 352000, cynthiaPago: false, cynthiaMonto: 0, carlosPago: false, carlosMonto: 352000 },
-            { mes: "05/2030", cuota: 352000, cynthiaPago: false, cynthiaMonto: 0, carlosPago: false, carlosMonto: 352000 },
-            { mes: "06/2030", cuota: 352000, cynthiaPago: false, cynthiaMonto: 0, carlosPago: false, carlosMonto: 352000 }
+            { mes: "03/2027", cuota: 352000, cynthiaPago: false, cynthiaMonto: 176000, carlosPago: false, carlosMonto: 176000 }
         ];
 
-        // Estado global de la aplicación
-        let appState = {
+        window.appState = {
             activeMonth: "Octubre 2026",
             monthsOrder: ["Abril 2026", "Mayo 2026", "Junio 2026", "Julio 2026", "Agosto 2026", "Septiembre 2026", "Octubre 2026"],
             sheets: DEFAULT_SHEETS_DATA,
-            ingresos: { "Octubre 2026": 1500000 },
+            ingresosDiversificados: {
+                "Octubre 2026": [
+                    { fuente: "Sueldo Principal", monto: 1200000 },
+                    { fuente: "Trabajos / Extras", monto: 300000 }
+                ]
+            },
             avoidDoubleCount: true,
             cencoSchedule: CENCO_SCHEDULE_DATA,
             darkMode: true
         };
 
-        // Diccionario de portales de pago oficiales en Chile
+        window.onload = async function () {
+            loadLocalState();
+            applyDarkMode();
+
+            if (firebaseConfig) {
+                try {
+                    const app = initializeApp(firebaseConfig);
+                    db = getFirestore(app);
+                    auth = getAuth(app);
+
+                    if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                        await signInWithCustomToken(auth, __initial_auth_token);
+                    } else {
+                        await signInAnonymously(auth);
+                    }
+
+                    const userId = auth.currentUser?.uid || 'default-user';
+                    const docRef = doc(db, 'artifacts', appId, 'users', userId, 'data', 'balances_2026');
+
+                    unsubscribe = onSnapshot(docRef, (docSnap) => {
+                        if (docSnap.exists()) {
+                            const cloudData = docSnap.data();
+                            if (cloudData && cloudData.sheets) {
+                                window.appState = cloudData;
+                                if (!window.appState.monthsOrder.includes(window.appState.activeMonth)) {
+                                    window.appState.activeMonth = window.appState.monthsOrder[window.appState.monthsOrder.length - 1];
+                                }
+                                document.getElementById('cloudStatusBadge').classList.remove('hidden');
+                                renderApp();
+                            }
+                        } else {
+                            setDoc(docRef, window.appState).catch(err => console.error(err));
+                        }
+                    }, (err) => console.error("Cloud sync error:", err));
+
+                } catch (e) {
+                    console.error("Firebase init failed:", e);
+                }
+            }
+
+            renderApp();
+        };
+
+        window.saveState = function() {
+            try {
+                localStorage.setItem('BALANCES_2026_CLOUD_V4', JSON.stringify(window.appState));
+                if (db && auth && auth.currentUser) {
+                    const userId = auth.currentUser.uid;
+                    const docRef = doc(db, 'artifacts', appId, 'users', userId, 'data', 'balances_2026');
+                    setDoc(docRef, window.appState).catch(err => console.error("Cloud save error:", err));
+                }
+            } catch (err) {
+                console.error('Error saving state:', err);
+            }
+        };
+
+        function loadLocalState() {
+            try {
+                const saved = localStorage.getItem('BALANCES_2026_CLOUD_V4');
+                if (saved) {
+                    const parsed = JSON.parse(saved);
+                    if (parsed && parsed.sheets) {
+                        window.appState = parsed;
+                    }
+                }
+            } catch (err) {
+                console.error('Error loading local state:', err);
+            }
+        }
+    </script>
+
+    <!-- Script Principal de la Aplicación -->
+    <script>
         const DEFAULT_PAYMENT_LINKS = [
             { keywords: ['itaú', 'itau'], url: 'https://ww2.itau.cl/', label: 'Banco Itaú' },
             { keywords: ['cencosud'], url: 'https://www.tarjetacencosud.cl/', label: 'Tarjeta Cencosud' },
@@ -670,39 +684,6 @@
             { keywords: ['mercado pago', 'mercadopago'], url: 'https://www.mercadopago.cl/', label: 'Mercado Pago' }
         ];
 
-        // Inicialización al cargar la ventana
-        window.onload = function() {
-            loadState();
-            if (!appState.monthsOrder.includes(appState.activeMonth)) {
-                appState.activeMonth = appState.monthsOrder[appState.monthsOrder.length - 1];
-            }
-            applyDarkMode();
-            renderApp();
-        };
-
-        function loadState() {
-            try {
-                const saved = localStorage.getItem(STORAGE_KEY);
-                if (saved) {
-                    const parsed = JSON.parse(saved);
-                    if (parsed && parsed.sheets) {
-                        appState = parsed;
-                    }
-                }
-            } catch (err) {
-                console.error('Error loading saved state:', err);
-            }
-        }
-
-        function saveState() {
-            try {
-                localStorage.setItem(STORAGE_KEY, JSON.stringify(appState));
-            } catch (err) {
-                console.error('Error saving state:', err);
-            }
-        }
-
-        // Formatear CLP $
         function formatCLP(value) {
             const num = Math.round(Number(value) || 0);
             const sign = num < 0 ? '-' : '';
@@ -731,13 +712,11 @@
         }
 
         function toggleAvoidDoubleCount() {
-            appState.avoidDoubleCount = !appState.avoidDoubleCount;
+            window.appState.avoidDoubleCount = !window.appState.avoidDoubleCount;
             saveState();
             renderApp();
             showToast(
-                appState.avoidDoubleCount
-                    ? 'Evitar doble conteo activado (cargos en tarjeta no se duplican)'
-                    : 'Evitar doble conteo desactivado (se suman todos los ítems)',
+                window.appState.avoidDoubleCount ? 'Evitar doble conteo activado' : 'Evitar doble conteo desactivado',
                 'indigo'
             );
         }
@@ -761,49 +740,37 @@
             return null;
         }
 
-        // Obtener el mes siguiente para el cálculo de vencimientos
         function getSheetPeriodInfo(monthLabel) {
-            const monthMap = {
-                "Abril 2026": { dueMonth: "Mayo 2026", dueMonthShort: "Mayo" },
-                "Mayo 2026": { dueMonth: "Junio 2026", dueMonthShort: "Junio" },
-                "Junio 2026": { dueMonth: "Julio 2026", dueMonthShort: "Julio" },
-                "Julio 2026": { dueMonth: "Agosto 2026", dueMonthShort: "Agosto" },
-                "Agosto 2026": { dueMonth: "Septiembre 2026", dueMonthShort: "Septiembre" },
-                "Septiembre 2026": { dueMonth: "Octubre 2026", dueMonthShort: "Octubre" },
-                "Octubre 2026": { dueMonth: "Noviembre 2026", dueMonthShort: "Noviembre" }
-            };
-            return monthMap[monthLabel] || { dueMonth: "Próximo Mes", dueMonthShort: "Próx" };
+            return { dueMonth: "Noviembre 2026", dueMonthShort: "Nov" };
         }
 
-        // Parsear días de vencimiento
         function parseVenceInfo(venceStr, periodInfo) {
             if (!venceStr) return { day: 99, label: '', isOverdue: false, badgeClass: 'bg-slate-800 text-slate-400' };
             const clean = venceStr.toLowerCase();
             if (clean.includes('planilla') || clean.includes('desc')) {
-                return { day: 99, label: 'Descuento por planilla', isOverdue: false, badgeClass: 'bg-indigo-500/10 text-indigo-400 border border-indigo-500/20' };
+                return { day: 99, label: 'Descuento planilla', isOverdue: false, badgeClass: 'bg-indigo-500/10 text-indigo-400 border border-indigo-500/20' };
             }
             const match = clean.match(/(\d+)/);
             if (!match) return { day: 99, label: venceStr, isOverdue: false, badgeClass: 'bg-slate-800 text-slate-400' };
             
             const dayNum = parseInt(match[1], 10);
-            // Simular fecha actual del sistema (Octubre 2026, día 17)
-            const currentDay = 17; 
+            const currentDay = 17;
             const diffDays = dayNum - currentDay;
 
             let badgeClass = 'bg-slate-800 text-slate-300';
-            let statusText = `Vence ${String(dayNum).padStart(2, '0')} ${periodInfo.dueMonthShort} (en ${diffDays}d)`;
+            let statusText = `Vence ${String(dayNum).padStart(2, '0')} Nov (en ${diffDays}d)`;
             let isOverdue = false;
 
             if (diffDays < 0) {
                 isOverdue = true;
                 badgeClass = 'bg-rose-500/10 text-rose-400 border border-rose-500/20';
-                statusText = `Venció hace ${Math.abs(diffDays)}d (${dayNum} ${periodInfo.dueMonthShort})`;
+                statusText = `Venció hace ${Math.abs(diffDays)}d (${dayNum} Nov)`;
             } else if (diffDays === 0) {
                 badgeClass = 'bg-amber-500/10 text-amber-400 border border-amber-500/20 font-bold';
-                statusText = `¡Vence Hoy! (${dayNum} ${periodInfo.dueMonthShort})`;
+                statusText = `¡Vence Hoy! (${dayNum} Nov)`;
             } else if (diffDays <= 3) {
                 badgeClass = 'bg-amber-500/10 text-amber-400 border border-amber-500/20';
-                statusText = `Vence ${String(dayNum).padStart(2, '0')} ${periodInfo.dueMonthShort} (¡Pronto!)`;
+                statusText = `Vence ${String(dayNum).padStart(2, '0')} Nov (Pronto)`;
             }
 
             return { day: dayNum, label: statusText, isOverdue, badgeClass };
@@ -812,7 +779,6 @@
         function formatCommentBadges(comment) {
             if (!comment) return '';
             const escaped = escapeHTML(comment);
-            // Resaltar cuotas estilo X/Y
             const cuotaRegex = /(\d+)\s*\/\s*(\d+)/g;
             if (cuotaRegex.test(comment)) {
                 return escaped.replace(cuotaRegex, '<span class="px-1.5 py-0.5 rounded bg-indigo-500/20 text-indigo-300 font-bold border border-indigo-500/30">Cuota $1/$2</span>');
@@ -820,43 +786,46 @@
             return escaped;
         }
 
-        // Renderizado Principal de la App
+        function getTotalIngresos(month) {
+            const list = window.appState.ingresosDiversificados[month] || [];
+            if (list.length === 0) {
+                // Fallback legacy
+                return Number(window.appState.ingresos?.[month]) || 1500000;
+            }
+            return list.reduce((acc, curr) => acc + (Number(curr.monto) || 0), 0);
+        }
+
         function renderApp() {
-            const activeMonth = appState.activeMonth;
-            const items = appState.sheets[activeMonth] || [];
+            const activeMonth = window.appState.activeMonth;
+            const items = window.appState.sheets[activeMonth] || [];
             const period = getSheetPeriodInfo(activeMonth);
 
-            // 1. Renderizar pestañas de meses
+            // 1. Renderizar pestañas
             const tabsContainer = document.getElementById('monthsTabsContainer');
-            tabsContainer.innerHTML = appState.monthsOrder.map(m => `
+            tabsContainer.innerHTML = window.appState.monthsOrder.map(m => `
                 <button onclick="switchMonth('${m}')" class="px-4 py-2 rounded-xl text-xs font-semibold transition shrink-0 ${m === activeMonth ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/30 scale-105' : 'bg-slate-800 text-slate-300 hover:bg-slate-700'}">
                     ${m}
                 </button>
             `).join('');
 
-            // 2. Botón Evitar Doble Conteo
+            // 2. Botón Avoid Double
             const btnAvoid = document.getElementById('btnAvoidDouble');
-            btnAvoid.className = `px-3 py-1.5 rounded-xl text-xs font-semibold border transition flex items-center gap-1.5 ${appState.avoidDoubleCount ? 'bg-indigo-600/20 border-indigo-500/40 text-indigo-300' : 'bg-slate-900 border-slate-700 text-slate-400'}`;
-            btnAvoid.innerHTML = `<i class="fa-solid fa-link"></i> Evitar doble conteo (Spin/CMR): ${appState.avoidDoubleCount ? 'ON' : 'OFF'}`;
+            btnAvoid.className = `px-3 py-1.5 rounded-xl text-xs font-semibold border transition flex items-center gap-1.5 ${window.appState.avoidDoubleCount ? 'bg-indigo-600/20 border-indigo-500/40 text-indigo-300' : 'bg-slate-900 border-slate-700 text-slate-400'}`;
+            btnAvoid.innerHTML = `<i class="fa-solid fa-link"></i> Evitar doble conteo: ${window.appState.avoidDoubleCount ? 'ON' : 'OFF'}`;
 
-            // 3. Procesar cálculos y filtrados
+            // 3. Cálculos
             const searchVal = (document.getElementById('searchInput').value || '').toLowerCase();
             const filterEstado = document.getElementById('filterEstado').value;
             const filterTipo = document.getElementById('filterTipo').value;
 
-            let totalValor = 0;
-            let totalPagado = 0;
-            let totalPorPagar = 0;
-            let costoFijo = 0;
-            let costoVariable = 0;
-            let pendientesCount = 0;
+            let totalValor = 0, totalPagado = 0, totalPorPagar = 0, costoFijo = 0, costoVariable = 0, pendientesCount = 0;
 
             const processedItems = items.map((it, idx) => {
                 const val = Number(it.valor) || 0;
                 const pag = Number(it.pagado) || (it.estado ? val : 0);
                 const porPg = computePorPagar({ ...it, pagado: pag });
                 const isSubCard = isItemChargedToCard(it);
-                const isExcluded = appState.avoidDoubleCount && isSubCard;
+                const isExcluded = window.appState.avoidDoubleCount && isSubCard;
 
                 if (!isExcluded) {
                     totalValor += val;
@@ -871,36 +840,31 @@
                 return { ...it, idx, computedVal: val, computedPag: pag, computedPorPagar: porPg, isSubCard, isExcludedFromSum: isExcluded, dueInfo };
             });
 
-            // Actualizar KPIs
             document.getElementById('kpiTotalGastos').textContent = formatCLP(totalValor);
-            document.getElementById('kpiTotalConceptos').textContent = `${items.length} conceptos registrados`;
+            document.getElementById('kpiTotalConceptos').textContent = `${items.length} conceptos activos`;
             document.getElementById('kpiTotalPagado').textContent = formatCLP(totalPagado);
             const percentPagado = totalValor > 0 ? Math.min(100, Math.round((totalPagado / totalValor) * 100)) : 0;
             document.getElementById('kpiPagadoBar').style.width = `${percentPagado}%`;
             document.getElementById('kpiTotalPendiente').textContent = formatCLP(totalPorPagar);
-            document.getElementById('kpiPendientesCount').textContent = `${pendientesCount} pendientes de pago`;
+            document.getElementById('kpiPendientesCount').textContent = `${pendientesCount} pendientes`;
             document.getElementById('kpiCostoFijo').textContent = formatCLP(costoFijo);
             document.getElementById('kpiCostoVariable').textContent = formatCLP(costoVariable);
 
-            const ingreso = Number(appState.ingresos[activeMonth]) || 0;
-            document.getElementById('kpiIngreso').textContent = formatCLP(ingreso);
-            const disponible = ingreso - totalPagado;
+            const totalIngresos = getTotalIngresos(activeMonth);
+            document.getElementById('kpiIngreso').textContent = formatCLP(totalIngresos);
+            const disponible = totalIngresos - totalPagado;
             const dispEl = document.getElementById('kpiDisponible');
             dispEl.textContent = `Disponible: ${formatCLP(disponible)}`;
             dispEl.className = `text-[11px] mt-0.5 font-semibold ${disponible >= 0 ? 'text-emerald-400' : 'text-rose-400'}`;
 
-            // 4. Renderizar Tarjetas de Agrupación Inteligente
             renderSmartGroups(processedItems, period);
 
-            // 5. Filtrar y Renderizar Tabla Principal
             const filtered = processedItems.filter(it => {
-                const matchesSearch = it.concepto.toLowerCase().includes(searchVal) || (it.comentario || '').toLowerCase().includes(searchVal) || (it.vence || '').toLowerCase().includes(searchVal);
+                const matchesSearch = it.concepto.toLowerCase().includes(searchVal) || (it.comentario || '').toLowerCase().includes(searchVal);
                 if (!matchesSearch) return false;
-
                 if (filterEstado === 'pendiente' && (it.estado || it.computedPorPagar <= 0)) return false;
                 if (filterEstado === 'pagado' && !it.estado) return false;
-                if (filterEstado === 'vencido' && (!it.dueInfo.isOverdue && !it.dueInfo.label.includes('¡Pronto!'))) return false;
-
+                if (filterEstado === 'vencido' && (!it.dueInfo.isOverdue && !it.dueInfo.label.includes('Pronto'))) return false;
                 if (filterTipo !== 'todos' && it.tipo !== filterTipo) return false;
                 return true;
             });
@@ -909,11 +873,11 @@
             tbody.innerHTML = filtered.map(item => {
                 const payLink = getPaymentLinkInfo(item);
                 const payButtonBadge = payLink
-                    ? `<a href="${escapeHTML(payLink.url)}" target="_blank" rel="noopener noreferrer" class="ml-1.5 inline-flex items-center gap-1 px-2 py-0.5 rounded-lg text-[10px] font-semibold bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/20 transition" title="Ir a ${escapeHTML(payLink.label)}"><i class="fa-solid fa-arrow-up-right-from-square text-[9px]"></i><span>${escapeHTML(payLink.label)}</span></a>`
+                    ? `<a href="${escapeHTML(payLink.url)}" target="_blank" rel="noopener noreferrer" class="ml-1.5 inline-flex items-center gap-1 px-2 py-0.5 rounded-lg text-[10px] font-semibold bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/20 transition"><i class="fa-solid fa-arrow-up-right-from-square text-[9px]"></i><span>${escapeHTML(payLink.label)}</span></a>`
                     : '';
                 
                 const subCardBadge = item.isSubCard
-                    ? `<span class="ml-1.5 inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-semibold ${item.isExcludedFromSum ? 'bg-indigo-500/10 text-indigo-400 border border-indigo-500/20' : 'bg-slate-800 text-slate-300'}" title="Cargado dentro de otra tarjeta del balance"><i class="fa-solid fa-link"></i>${item.isExcludedFromSum ? 'Incluido en Tarjeta (No duplica)' : 'Cargo en Tarjeta'}</span>`
+                    ? `<span class="ml-1.5 inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-semibold ${item.isExcludedFromSum ? 'bg-indigo-500/10 text-indigo-400 border border-indigo-500/20' : 'bg-slate-800 text-slate-300'}"><i class="fa-solid fa-link"></i>${item.isExcludedFromSum ? 'Incluido (No duplica)' : 'En Tarjeta'}</span>`
                     : '';
 
                 const commentHTML = formatCommentBadges(item.comentario || '');
@@ -921,7 +885,7 @@
                 return `
                     <tr class="hover:bg-slate-700/30 transition ${item.estado ? 'bg-slate-900/30 opacity-75' : ''}">
                         <td class="py-3 px-4 text-center">
-                            <input type="checkbox" ${item.estado ? 'checked' : ''} onchange="toggleItemEstado(${item.idx})" class="w-4 h-4 rounded cursor-pointer accent-emerald-500 bg-slate-800 border-slate-700" title="Marcar pagado / pendiente">
+                            <input type="checkbox" ${item.estado ? 'checked' : ''} onchange="toggleItemEstado(${item.idx})" class="w-4 h-4 rounded cursor-pointer accent-emerald-500 bg-slate-800 border-slate-700">
                         </td>
                         <td class="py-3 px-4 font-semibold ${item.estado ? 'line-through text-slate-500' : 'text-slate-100'}">
                             <div class="flex flex-wrap items-center gap-y-1">
@@ -930,8 +894,8 @@
                                 ${subCardBadge}
                             </div>
                         </td>
-                        <td class="py-3 px-4 text-right font-semibold ${item.isExcludedFromSum ? 'line-through decoration-indigo-400 text-slate-500' : ''}">
-                            <button onclick="quickEditValor(${item.idx})" class="hover:underline decoration-indigo-500 cursor-pointer" title="Clic para editar valor">${formatCLP(item.computedVal)}</button>
+                        <td class="py-3 px-4 text-right font-semibold ${item.isExcludedFromSum ? 'line-through text-slate-500' : ''}">
+                            <button onclick="quickEditValor(${item.idx})" class="hover:underline decoration-indigo-500">${formatCLP(item.computedVal)}</button>
                         </td>
                         <td class="py-3 px-4 text-right text-emerald-400 font-semibold">${formatCLP(item.computedPag)}</td>
                         <td class="py-3 px-4 text-right font-semibold ${item.computedPorPagar > 0 ? 'text-rose-400' : 'text-slate-500'}">${formatCLP(item.computedPorPagar)}</td>
@@ -947,26 +911,23 @@
                         <td class="py-3 px-4 text-slate-400 text-[11px]">${commentHTML}</td>
                         <td class="py-3 px-4 text-center">
                             <div class="inline-flex items-center gap-1">
-                                ${payLink ? `<a href="${escapeHTML(payLink.url)}" target="_blank" rel="noopener noreferrer" class="p-1.5 rounded-lg hover:bg-emerald-500/10 text-emerald-400 transition" title="Pagar en ${escapeHTML(payLink.label)}"><i class="fa-solid fa-credit-card text-xs"></i></a>` : ''}
-                                <button onclick="openItemModal(${item.idx})" class="p-1.5 rounded-lg hover:bg-slate-700 text-slate-400 hover:text-indigo-400 transition" title="Editar"><i class="fa-solid fa-pen-to-square text-xs"></i></button>
-                                <button onclick="deleteItem(${item.idx})" class="p-1.5 rounded-lg hover:bg-rose-500/10 text-slate-400 hover:text-rose-400 transition" title="Eliminar"><i class="fa-solid fa-trash-can text-xs"></i></button>
+                                ${payLink ? `<a href="${escapeHTML(payLink.url)}" target="_blank" rel="noopener noreferrer" class="p-1.5 rounded-lg hover:bg-emerald-500/10 text-emerald-400 transition"><i class="fa-solid fa-credit-card text-xs"></i></a>` : ''}
+                                <button onclick="openItemModal(${item.idx})" class="p-1.5 rounded-lg hover:bg-slate-700 text-slate-400 hover:text-indigo-400 transition"><i class="fa-solid fa-pen-to-square text-xs"></i></button>
+                                <button onclick="deleteItem(${item.idx})" class="p-1.5 rounded-lg hover:bg-rose-500/10 text-slate-400 hover:text-rose-400 transition"><i class="fa-solid fa-trash-can text-xs"></i></button>
                             </div>
                         </td>
                     </tr>
                 `;
-            }).join('') || `<tr><td colspan="9" class="py-8 text-center text-slate-500">No se encontraron conceptos que coincidan con el filtro</td></tr>`;
+            }).join('') || `<tr><td colspan="9" class="py-8 text-center text-slate-500">No se encontraron conceptos</td></tr>`;
 
             document.getElementById('tableTotalValor').textContent = formatCLP(totalValor);
             document.getElementById('tableTotalPagado').textContent = formatCLP(totalPagado);
             document.getElementById('tableTotalPorPagar').textContent = formatCLP(totalPorPagar);
 
-            // 6. Renderizar Gráfico y Cronograma
             renderChartAndCronograma(processedItems, period);
         }
 
-        // Renderizar Tarjetas de Agrupación
         function renderSmartGroups(items, period) {
-            // Grupo 1: Entel
             const entelItems = items.filter(it => {
                 const c = (it.concepto || '').toLowerCase();
                 const com = (it.comentario || '').toLowerCase();
@@ -984,7 +945,6 @@
                 </div>
             `).join('') || '<p class="text-slate-500">Sin cobros Entel</p>';
 
-            // Grupo 2: Autopistas TAG y Bencina
             const tagItems = items.filter(it => {
                 const c = (it.concepto || '').toLowerCase();
                 return c.includes('vespucio') || c.includes('rutapass') || c.includes('autopista') || c.includes('costanera') || c.includes('bencina') || c.includes('bip');
@@ -993,21 +953,16 @@
             const onlyPorticos = tagItems.filter(it => !it.concepto.toLowerCase().includes('bencina') && !it.concepto.toLowerCase().includes('bip')).reduce((acc, it) => acc + it.computedVal, 0);
             document.getElementById('groupTagTotal').textContent = formatCLP(tagTotal);
             document.getElementById('groupTagOnlyTotal').textContent = `TAG: ${formatCLP(onlyPorticos)}`;
-            document.getElementById('groupTagList').innerHTML = tagItems.filter(it => Number(it.valor) > 0).map(it => {
-                const linkInfo = getPaymentLinkInfo(it);
-                return `
-                    <div class="flex items-center justify-between py-0.5">
-                        <span class="flex items-center gap-1.5 text-slate-300">
-                            <i class="fa-solid ${it.estado ? 'fa-circle-check text-emerald-400' : 'fa-circle text-slate-700'} text-[10px]"></i>
-                            <span>${escapeHTML(it.concepto)}</span>
-                            ${linkInfo ? `<a href="${escapeHTML(linkInfo.url)}" target="_blank" rel="noopener noreferrer" class="text-amber-400 hover:text-amber-300 ml-0.5" title="Ir a ${escapeHTML(linkInfo.label)}"><i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i></a>` : ''}
-                        </span>
-                        <span class="font-semibold text-white">${formatCLP(it.valor)}</span>
-                    </div>
-                `;
-            }).join('') || '<p class="text-slate-500">Sin cobros TAG</p>';
+            document.getElementById('groupTagList').innerHTML = tagItems.filter(it => Number(it.valor) > 0).map(it => `
+                <div class="flex items-center justify-between py-0.5">
+                    <span class="flex items-center gap-1.5 text-slate-300">
+                        <i class="fa-solid ${it.estado ? 'fa-circle-check text-emerald-400' : 'fa-circle text-slate-700'} text-[10px]"></i>
+                        <span>${escapeHTML(it.concepto)}</span>
+                    </span>
+                    <span class="font-semibold text-white">${formatCLP(it.valor)}</span>
+                </div>
+            `).join('') || '<p class="text-slate-500">Sin cobros TAG</p>';
 
-            // Grupo 3: Créditos en Cuotas
             const creditItems = items.filter(it => {
                 const c = (it.concepto || '').toLowerCase();
                 const com = (it.comentario || '').toLowerCase();
@@ -1026,7 +981,7 @@
                     const total = parseInt(match[2], 10);
                     const restantes = Math.max(0, total - actual);
                     futureDebt += restantes * it.computedVal;
-                    badgeInfo = `<span class="px-1.5 py-0.5 rounded bg-indigo-500/20 text-indigo-300 text-[10px] font-bold">Cuota ${actual}/${total} (${restantes} restantes)</span>`;
+                    badgeInfo = `<span class="px-1.5 py-0.5 rounded bg-indigo-500/20 text-indigo-300 text-[10px] font-bold">Cuota ${actual}/${total} (${restantes} rest.)</span>`;
                 }
                 return `
                     <div class="flex items-center justify-between py-1 border-b border-slate-800/60 last:border-0">
@@ -1037,15 +992,13 @@
                         <div class="text-right font-bold text-white">${formatCLP(it.computedVal)}</div>
                     </div>
                 `;
-            }).join('') || '<p class="text-slate-500">Sin créditos registrados</p>';
+            }).join('') || '<p class="text-slate-500">Sin créditos</p>';
             document.getElementById('groupCreditFutureTotal').textContent = formatCLP(futureDebt);
 
-            // Grupo 4: Cuentas Compartidas / CENCO
-            const activeCenco = appState.cencoSchedule.find(c => {
+            const activeCenco = window.appState.cencoSchedule.find(c => {
                 const [mesNum, anioNum] = c.mes.split('/');
                 const monthNames = ["", "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
-                const label = `${monthNames[parseInt(mesNum, 10)]} ${anioNum}`;
-                return label === appState.activeMonth;
+                return `${monthNames[parseInt(mesNum, 10)]} ${anioNum}` === activeMonth;
             }) || { cuota: 352000, cynthiaPago: false, carlosPago: false };
 
             document.getElementById('groupCencoTotal').textContent = formatCLP(activeCenco.cuota);
@@ -1053,43 +1006,38 @@
                 <div class="flex items-center justify-between p-2 rounded-xl bg-slate-900/60 border border-slate-800">
                     <div class="flex items-center gap-2">
                         <input type="checkbox" ${activeCenco.cynthiaPago ? 'checked' : ''} onchange="toggleCencoPayer('cynthia')" class="w-4 h-4 rounded accent-purple-500 bg-slate-800 border-slate-700">
-                        <span class="font-medium text-slate-200">Cynthia (Mitad)</span>
+                        <span class="font-medium text-slate-200">Cynthia</span>
                     </div>
-                    <span class="font-bold text-purple-400">${typeof activeCenco.cynthiaMonto === 'number' ? formatCLP(activeCenco.cynthiaMonto) : activeCenco.cynthiaMonto}</span>
+                    <span class="font-bold text-purple-400">$176.000</span>
                 </div>
                 <div class="flex items-center justify-between p-2 rounded-xl bg-slate-900/60 border border-slate-800">
                     <div class="flex items-center gap-2">
                         <input type="checkbox" ${activeCenco.carlosPago ? 'checked' : ''} onchange="toggleCencoPayer('carlos')" class="w-4 h-4 rounded accent-purple-500 bg-slate-800 border-slate-700">
-                        <span class="font-medium text-slate-200">Carlos (Mitad)</span>
+                        <span class="font-medium text-slate-200">Carlos</span>
                     </div>
-                    <span class="font-bold text-purple-400">${typeof activeCenco.carlosMonto === 'number' ? formatCLP(activeCenco.carlosMonto) : activeCenco.carlosMonto}</span>
+                    <span class="font-bold text-purple-400">$176.000</span>
                 </div>
             `;
         }
 
-        // Renderizar Gráfico y Cronograma
         function renderChartAndCronograma(items, period) {
-            // Gráfico Anual
             const chartContainer = document.getElementById('chartContainer');
-            const months = appState.monthsOrder;
+            const months = window.appState.monthsOrder;
             chartContainer.innerHTML = months.map(m => {
-                const sheet = appState.sheets[m] || [];
+                const sheet = window.appState.sheets[m] || [];
                 let f = 0, v = 0;
                 sheet.forEach(it => {
-                    const isSub = isItemChargedToCard(it);
-                    if (appState.avoidDoubleCount && isSub) return;
+                    if (window.appState.avoidDoubleCount && isItemChargedToCard(it)) return;
                     const val = Number(it.valor) || 0;
                     if (it.tipo === 'Fijo') f += val;
                     else v += val;
                 });
                 const total = f + v;
-                // Altura proporcional (máx 140px)
-                const maxHeight = 130;
-                const maxVal = 2000000; // 2M referencia
+                const maxHeight = 130, maxVal = 2000000;
                 const heightF = Math.min(maxHeight, Math.round((f / maxVal) * maxHeight));
                 const heightV = Math.min(maxHeight, Math.round((v / maxVal) * maxHeight));
                 const shortName = m.split(' ')[0].substring(0, 3);
-                const isCurrent = m === appState.activeMonth;
+                const isCurrent = m === window.appState.activeMonth;
 
                 return `
                     <div onclick="switchMonth('${m}')" class="flex-1 flex flex-col items-center h-full justify-end cursor-pointer group" title="${m}: Fijo ${formatCLP(f)} | Variable ${formatCLP(v)}">
@@ -1103,7 +1051,6 @@
                 `;
             }).join('');
 
-            // Cronograma
             const withDue = items.filter(it => it.vence && Number(it.valor) > 0).map(it => {
                 const due = parseVenceInfo(it.vence, period);
                 return { ...it, dueDay: due.day };
@@ -1112,7 +1059,7 @@
             const cronogramaList = document.getElementById('cronogramaList');
             cronogramaList.innerHTML = withDue.map(it => {
                 const isPaid = it.estado;
-                const dayLabel = it.dueDay < 99 ? `${String(it.dueDay).padStart(2, '0')} ${period.dueMonthShort}` : 'Planilla';
+                const dayLabel = it.dueDay < 99 ? `${String(it.dueDay).padStart(2, '0')} Nov` : 'Planilla';
                 const payLink = getPaymentLinkInfo(it);
                 return `
                     <div class="flex items-center justify-between p-2.5 rounded-xl bg-slate-900/60 border border-slate-800 text-xs">
@@ -1121,7 +1068,6 @@
                             <div>
                                 <div class="font-semibold text-slate-100 flex items-center gap-1.5">
                                     <span>${escapeHTML(it.concepto)}</span>
-                                    ${payLink ? `<a href="${escapeHTML(payLink.url)}" target="_blank" rel="noopener noreferrer" class="text-emerald-400 hover:text-emerald-300" title="Ir a pagar"><i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i></a>` : ''}
                                 </div>
                                 <div class="text-[10px] text-slate-400">${escapeHTML(it.vence)}</div>
                             </div>
@@ -1132,31 +1078,84 @@
                         </div>
                     </div>
                 `;
-            }).join('') || '<p class="text-slate-500 text-center py-4">No hay vencimientos con fecha definida este mes</p>';
+            }).join('') || '<p class="text-slate-500 text-center py-4">No hay vencimientos</p>';
         }
 
-        // Acciones y Modales
+        // Ingresos Diversificados Modal
+        function openIngresosModal() {
+            const activeMonth = window.appState.activeMonth;
+            document.getElementById('ingresosModalSubtitle').textContent = `Fuentes de ingreso registradas para ${activeMonth}.`;
+            renderIngresosList();
+            openModal('ingresosModal');
+        }
+
+        function renderIngresosList() {
+            const activeMonth = window.appState.activeMonth;
+            if (!window.appState.ingresosDiversificados[activeMonth]) {
+                const legacy = Number(window.appState.ingresos?.[activeMonth]) || 1500000;
+                window.appState.ingresosDiversificados[activeMonth] = [{ fuente: 'Ingreso Principal', monto: legacy }];
+            }
+            const list = window.appState.ingresosDiversificados[activeMonth];
+            const container = document.getElementById('ingresosListContainer');
+            
+            container.innerHTML = list.map((item, idx) => `
+                <div class="flex items-center justify-between p-2.5 rounded-xl bg-slate-900 border border-slate-800 text-xs">
+                    <div>
+                        <div class="font-semibold text-white">${escapeHTML(item.fuente)}</div>
+                        <div class="text-[11px] font-bold text-sky-400">${formatCLP(item.monto)}</div>
+                    </div>
+                    <button onclick="deleteIngresoItem(${idx})" class="p-1 rounded-lg hover:bg-rose-500/10 text-slate-400 hover:text-rose-400 transition"><i class="fa-solid fa-trash-can text-xs"></i></button>
+                </div>
+            `).join('') || '<p class="text-slate-500 text-xs">No hay fuentes de ingreso registradas</p>';
+        }
+
+        function addIngresoItem() {
+            const source = document.getElementById('newIngresoSource').value.trim();
+            const amount = parseInt(document.getElementById('newIngresoAmount').value, 10) || 0;
+            if (!source || amount <= 0) {
+                alert('Ingresa una fuente y un monto válido');
+                return;
+            }
+            const activeMonth = window.appState.activeMonth;
+            if (!window.appState.ingresosDiversificados[activeMonth]) {
+                window.appState.ingresosDiversificados[activeMonth] = [];
+            }
+            window.appState.ingresosDiversificados[activeMonth].push({ fuente: source, monto: amount });
+            document.getElementById('newIngresoSource').value = '';
+            document.getElementById('newIngresoAmount').value = '';
+            saveState();
+            renderIngresosList();
+            renderApp();
+            showToast('Ingreso agregado', 'emerald');
+        }
+
+        function deleteIngresoItem(idx) {
+            const activeMonth = window.appState.activeMonth;
+            window.appState.ingresosDiversificados[activeMonth].splice(idx, 1);
+            saveState();
+            renderIngresosList();
+            renderApp();
+            showToast('Ingreso eliminado', 'rose');
+        }
+
+        // Acciones generales
         function switchMonth(m) {
-            appState.activeMonth = m;
+            window.appState.activeMonth = m;
             renderApp();
         }
 
         function toggleItemEstado(idx) {
-            const list = appState.sheets[appState.activeMonth];
+            const list = window.appState.sheets[window.appState.activeMonth];
             if (list && list[idx]) {
                 list[idx].estado = !list[idx].estado;
-                if (list[idx].estado) {
-                    list[idx].pagado = list[idx].valor;
-                } else {
-                    list[idx].pagado = 0;
-                }
+                list[idx].pagado = list[idx].estado ? list[idx].valor : 0;
                 saveState();
                 renderApp();
             }
         }
 
         function quickEditValor(idx) {
-            const list = appState.sheets[appState.activeMonth];
+            const list = window.appState.sheets[window.appState.activeMonth];
             if (list && list[idx]) {
                 const nuevo = prompt(`Nuevo valor para ${list[idx].concepto}:`, list[idx].valor);
                 if (nuevo !== null) {
@@ -1174,8 +1173,8 @@
             document.getElementById('editItemIndex').value = idx;
             const modalTitle = document.getElementById('modalItemTitle');
             if (idx >= 0) {
-                modalTitle.textContent = `Editar Concepto en ${appState.activeMonth}`;
-                const item = appState.sheets[appState.activeMonth][idx];
+                modalTitle.textContent = `Editar Concepto`;
+                const item = window.appState.sheets[window.appState.activeMonth][idx];
                 document.getElementById('formConcepto').value = item.concepto || '';
                 document.getElementById('formValor').value = item.valor || '';
                 document.getElementById('formPagado').value = item.pagado || 0;
@@ -1185,7 +1184,7 @@
                 document.getElementById('formUrlPago').value = item.urlPago || '';
                 document.getElementById('formEstado').checked = Boolean(item.estado);
             } else {
-                modalTitle.textContent = `Agregar Concepto a ${appState.activeMonth}`;
+                modalTitle.textContent = `Agregar Concepto`;
                 document.getElementById('itemForm').reset();
                 document.getElementById('editItemIndex').value = -1;
                 document.getElementById('formValor').value = '';
@@ -1210,7 +1209,7 @@
             if (estado) pagado = valor;
 
             const newItem = { estado, concepto, valor, pagado, tipo, vence, comentario, urlPago, incluidoTarjeta: comentario.toLowerCase().includes('se carga a') };
-            const list = appState.sheets[appState.activeMonth];
+            const list = window.appState.sheets[window.appState.activeMonth];
 
             if (idx >= 0) {
                 list[idx] = newItem;
@@ -1227,7 +1226,7 @@
 
         function deleteItem(idx) {
             if (confirm('¿Estás seguro de eliminar este concepto?')) {
-                appState.sheets[appState.activeMonth].splice(idx, 1);
+                window.appState.sheets[window.appState.activeMonth].splice(idx, 1);
                 saveState();
                 renderApp();
                 showToast('Concepto eliminado', 'rose');
@@ -1235,7 +1234,7 @@
         }
 
         function paySmartGroup(groupType) {
-            const list = appState.sheets[appState.activeMonth];
+            const list = window.appState.sheets[window.appState.activeMonth];
             list.forEach(it => {
                 const c = (it.concepto || '').toLowerCase();
                 const com = (it.comentario || '').toLowerCase();
@@ -1252,29 +1251,26 @@
             });
             saveState();
             renderApp();
-            showToast(`Grupo ${groupType.toUpperCase()} marcado como pagado`, 'emerald');
+            showToast(`Grupo pagado`, 'emerald');
         }
 
         function addNewMonthModal() {
-            const currentMonths = appState.monthsOrder;
+            const currentMonths = window.appState.monthsOrder;
             const lastMonth = currentMonths[currentMonths.length - 1];
-            // Proponer siguiente mes
             const monthNames = ["Abril 2026", "Mayo 2026", "Junio 2026", "Julio 2026", "Agosto 2026", "Septiembre 2026", "Octubre 2026", "Noviembre 2026", "Diciembre 2026", "Enero 2027"];
             const nextIdx = monthNames.indexOf(lastMonth) + 1;
             const newName = nextIdx > 0 && nextIdx < monthNames.length ? monthNames[nextIdx] : prompt("Nombre del nuevo mes:", "Noviembre 2026");
 
             if (!newName) return;
-            if (appState.sheets[newName]) {
+            if (window.appState.sheets[newName]) {
                 alert('Este mes ya existe');
                 return;
             }
 
-            // Clonar mes anterior incrementando cuotas X/Y
-            const prevList = appState.sheets[lastMonth] || [];
+            const prevList = window.appState.sheets[lastMonth] || [];
             const newList = prevList.map(item => {
                 let newComment = item.comentario || '';
                 let newValor = item.valor;
-                // Incrementar cuota X/Y
                 const cuotaRegex = /(\w+)\s+(\d+)\s*\/\s*(\d+)/i;
                 const match = newComment.match(cuotaRegex);
                 if (match) {
@@ -1283,7 +1279,7 @@
                     const totalCuota = parseInt(match[3], 10);
                     const nextCuota = curCuota + 1;
                     if (nextCuota > totalCuota) {
-                        newValor = 0; // Crédito finalizado
+                        newValor = 0;
                         newComment = `${prefix} (${totalCuota}/${totalCuota} - Finalizado)`;
                     } else {
                         newComment = newComment.replace(cuotaRegex, `${prefix} ${nextCuota}/${totalCuota}`);
@@ -1303,33 +1299,16 @@
                 };
             });
 
-            appState.monthsOrder.push(newName);
-            appState.sheets[newName] = newList;
-            appState.ingresos[newName] = appState.ingresos[lastMonth] || 1500000;
-            appState.activeMonth = newName;
+            window.appState.monthsOrder.push(newName);
+            window.appState.sheets[newName] = newList;
+            window.appState.ingresosDiversificados[newName] = JSON.parse(JSON.stringify(window.appState.ingresosDiversificados[lastMonth] || [{fuente: 'Ingreso Principal', monto: 1500000}]));
+            window.appState.activeMonth = newName;
 
             saveState();
             renderApp();
-            showToast(`Mes ${newName} creado exitosamente`, 'emerald');
+            showToast(`Mes ${newName} creado`, 'emerald');
         }
 
-        // Ingreso Modal
-        function openIngresoModal() {
-            document.getElementById('formIngresoInput').value = appState.ingresos[appState.activeMonth] || 1500000;
-            document.getElementById('ingresoModalSubtitle').textContent = `Define el ingreso disponible para ${appState.activeMonth}.`;
-            openModal('ingresoModal');
-        }
-
-        function saveIngreso() {
-            const val = parseInt(document.getElementById('formIngresoInput').value, 10) || 0;
-            appState.ingresos[appState.activeMonth] = val;
-            saveState();
-            closeModal('ingresoModal');
-            renderApp();
-            showToast('Ingreso actualizado', 'emerald');
-        }
-
-        // Pegar desde Sheets
         function openPasteModal() {
             document.getElementById('pasteTextArea').value = '';
             openModal('pasteModal');
@@ -1337,14 +1316,9 @@
 
         function processPastedData() {
             const text = document.getElementById('pasteTextArea').value.trim();
-            if (!text) {
-                alert('Por favor pega algún contenido');
-                return;
-            }
-
+            if (!text) return;
             const rows = text.split('\n');
             const newItems = [];
-
             rows.forEach(row => {
                 const cols = row.split('\t');
                 if (cols.length >= 2) {
@@ -1357,61 +1331,41 @@
                     const comentario = cols[7] ? cols[7].trim() : '';
 
                     if (concepto) {
-                        newItems.push({
-                            estado,
-                            concepto,
-                            valor,
-                            pagado,
-                            tipo,
-                            vence,
-                            comentario,
-                            urlPago: '',
-                            incluidoTarjeta: comentario.toLowerCase().includes('se carga a')
-                        });
+                        newItems.push({ estado, concepto, valor, pagado, tipo, vence, comentario, urlPago: '', incluidoTarjeta: comentario.toLowerCase().includes('se carga a') });
                     }
                 }
             });
-
             if (newItems.length > 0) {
-                appState.sheets[appState.activeMonth] = newItems;
+                window.appState.sheets[window.appState.activeMonth] = newItems;
                 saveState();
                 closeModal('pasteModal');
                 renderApp();
-                showToast(`Se importaron ${newItems.length} conceptos correctamente`, 'emerald');
-            } else {
-                alert('No se pudieron reconocer filas válidas. Asegúrate de copiar desde las columnas de Google Sheets.');
+                showToast('Datos importados', 'emerald');
             }
         }
 
-        // CENCO Modal y control
         function openCencoModal() {
             const tbody = document.getElementById('cencoTableBody');
             let totalAcumulado = 0;
-
-            tbody.innerHTML = appState.cencoSchedule.map((row, idx) => {
+            tbody.innerHTML = window.appState.cencoSchedule.map((row, idx) => {
                 totalAcumulado += row.cuota;
                 return `
                     <tr class="hover:bg-slate-800/40">
                         <td class="py-2.5 px-3 font-semibold text-white">${row.mes}</td>
                         <td class="py-2.5 px-3 text-right font-bold text-purple-400">${formatCLP(row.cuota)}</td>
-                        <td class="py-2.5 px-3 text-center">
-                            <input type="checkbox" ${row.cynthiaPago ? 'checked' : ''} onchange="toggleCencoRow(${idx}, 'cynthia')" class="w-4 h-4 rounded accent-purple-500 bg-slate-800 border-slate-700">
-                        </td>
-                        <td class="py-2.5 px-3 text-right text-slate-300">${typeof row.cynthiaMonto === 'number' ? formatCLP(row.cynthiaMonto) : row.cynthiaMonto}</td>
-                        <td class="py-2.5 px-3 text-center">
-                            <input type="checkbox" ${row.carlosPago ? 'checked' : ''} onchange="toggleCencoRow(${idx}, 'carlos')" class="w-4 h-4 rounded accent-purple-500 bg-slate-800 border-slate-700">
-                        </td>
-                        <td class="py-2.5 px-3 text-right text-slate-300">${typeof row.carlosMonto === 'number' ? formatCLP(row.carlosMonto) : row.carlosMonto}</td>
+                        <td class="py-2.5 px-3 text-center"><input type="checkbox" ${row.cynthiaPago ? 'checked' : ''} onchange="toggleCencoRow(${idx}, 'cynthia')" class="w-4 h-4 rounded accent-purple-500 bg-slate-800 border-slate-700"></td>
+                        <td class="py-2.5 px-3 text-right text-slate-300">$176.000</td>
+                        <td class="py-2.5 px-3 text-center"><input type="checkbox" ${row.carlosPago ? 'checked' : ''} onchange="toggleCencoRow(${idx}, 'carlos')" class="w-4 h-4 rounded accent-purple-500 bg-slate-800 border-slate-700"></td>
+                        <td class="py-2.5 px-3 text-right text-slate-300">$176.000</td>
                     </tr>
                 `;
             }).join('');
-
-            document.getElementById('cencoSummaryText').textContent = `Total programado 2026–2030: ${formatCLP(totalAcumulado)}`;
+            document.getElementById('cencoSummaryText').textContent = `Total programado: ${formatCLP(totalAcumulado)}`;
             openModal('cencoModal');
         }
 
         function toggleCencoRow(idx, person) {
-            const row = appState.cencoSchedule[idx];
+            const row = window.appState.cencoSchedule[idx];
             if (person === 'cynthia') row.cynthiaPago = !row.cynthiaPago;
             if (person === 'carlos') row.carlosPago = !row.carlosPago;
             saveState();
@@ -1420,8 +1374,8 @@
         }
 
         function toggleCencoPayer(person) {
-            const activeMonth = appState.activeMonth;
-            const found = appState.cencoSchedule.find(c => {
+            const activeMonth = window.appState.activeMonth;
+            const found = window.appState.cencoSchedule.find(c => {
                 const [mesNum, anioNum] = c.mes.split('/');
                 const monthNames = ["", "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
                 return `${monthNames[parseInt(mesNum, 10)]} ${anioNum}` === activeMonth;
@@ -1434,119 +1388,45 @@
             }
         }
 
-        // Importación / Exportación CSV y JSON
         function exportCSV() {
-            const items = appState.sheets[appState.activeMonth] || [];
+            const items = window.appState.sheets[window.appState.activeMonth] || [];
             let csv = "Estado,Concepto,Valor,Pagado,Por pagar,Tipo de costo,Cargo o Vence,Comentario\n";
             items.forEach(it => {
                 csv += `${it.estado},"${it.concepto}",${it.valor},${it.pagado},${computePorPagar(it)},"${it.tipo}","${it.vence || ''}","${it.comentario || ''}"\n`;
             });
             const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-            const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
-            a.href = url;
-            a.download = `Balance_${appState.activeMonth.replace(' ', '_')}_2026.csv`;
+            a.href = URL.createObjectURL(blob);
+            a.download = `Balance_${window.appState.activeMonth.replace(' ', '_')}.csv`;
             a.click();
-            showToast('Archivo CSV exportado', 'emerald');
-        }
-
-        function handleCsvImport(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const text = e.target.result;
-                const rows = text.split('\n');
-                const newItems = [];
-                for (let i = 1; i < rows.length; i++) {
-                    const row = rows[i].trim();
-                    if (!row) continue;
-                    // Parser básico CSV con comillas
-                    const cols = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
-                    if (cols.length >= 2) {
-                        const estado = cols[0].trim().toUpperCase() === 'TRUE';
-                        const concepto = cols[1].replace(/"/g, '').trim();
-                        const valor = parseCLP(cols[2] || 0);
-                        const pagado = parseCLP(cols[3] || 0);
-                        const tipo = (cols[5] && cols[5].replace(/"/g, '').trim().toLowerCase().includes('fijo')) ? 'Fijo' : 'Variable';
-                        const vence = cols[6] ? cols[6].replace(/"/g, '').trim() : '';
-                        const comentario = cols[7] ? cols[7].replace(/"/g, '').trim() : '';
-
-                        newItems.push({
-                            estado, concepto, valor, pagado, tipo, vence, comentario, urlPago: '', incluidoTarjeta: comentario.toLowerCase().includes('se carga a')
-                        });
-                    }
-                }
-                if (newItems.length > 0) {
-                    appState.sheets[appState.activeMonth] = newItems;
-                    saveState();
-                    renderApp();
-                    showToast('CSV importado al mes activo', 'emerald');
-                }
-            };
-            reader.readAsText(file);
+            showToast('CSV exportado', 'emerald');
         }
 
         function exportJSON() {
-            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appState, null, 2));
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(window.appState, null, 2));
             const a = document.createElement('a');
             a.href = dataStr;
-            a.download = `Balances_2026_Respaldo_Completo.json`;
+            a.download = `Balances_2026_Respaldo.json`;
             a.click();
-            showToast('Respaldo JSON descargado', 'amber');
+            showToast('JSON descargado', 'amber');
         }
 
-        function handleJsonImport(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                try {
-                    const parsed = JSON.parse(e.target.result);
-                    if (parsed && parsed.sheets) {
-                        appState = parsed;
-                        saveState();
-                        renderApp();
-                        showToast('Respaldo restaurado con éxito', 'emerald');
-                    } else {
-                        alert('El archivo JSON no tiene el formato válido');
-                    }
-                } catch (err) {
-                    alert('Error al leer el archivo JSON');
-                }
-            };
-            reader.readAsText(file);
-        }
+        function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
+        function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
 
-        // Modales genéricos
-        function openModal(id) {
-            document.getElementById(id).classList.remove('hidden');
-        }
-        function closeModal(id) {
-            document.getElementById(id).classList.add('hidden');
-        }
-
-        // Toast de notificaciones
         function showToast(msg, color = 'emerald') {
             const toast = document.getElementById('toast');
             const msgEl = document.getElementById('toastMsg');
             const iconEl = document.getElementById('toastIcon');
             msgEl.textContent = msg;
-
             toast.className = `fixed bottom-5 right-5 z-50 transform translate-y-0 opacity-100 transition-all duration-300 px-4 py-3 rounded-2xl shadow-2xl text-xs font-semibold flex items-center gap-2 border bg-slate-900 border-slate-700 text-white`;
-            
-            if (color === 'emerald') iconEl.className = 'fa-solid fa-circle-check text-emerald-400';
-            else if (color === 'indigo') iconEl.className = 'fa-solid fa-circle-info text-indigo-400';
-            else if (color === 'rose') iconEl.className = 'fa-solid fa-triangle-exclamation text-rose-400';
-            else if (color === 'amber') iconEl.className = 'fa-solid fa-database text-amber-400';
-
             setTimeout(() => {
                 toast.className = `fixed bottom-5 right-5 z-50 transform translate-y-20 opacity-0 transition-all duration-300 px-4 py-3 rounded-2xl shadow-2xl text-xs font-semibold flex items-center gap-2 border`;
             }, 3000);
         }
 
         function toggleDarkMode() {
-            appState.darkMode = !appState.darkMode;
+            window.appState.darkMode = !window.appState.darkMode;
             saveState();
             applyDarkMode();
         }
@@ -1554,7 +1434,7 @@
         function applyDarkMode() {
             const html = document.documentElement;
             const icon = document.getElementById('darkModeIcon');
-            if (appState.darkMode) {
+            if (window.appState.darkMode) {
                 html.classList.add('dark');
                 icon.className = 'fa-solid fa-sun text-xs text-amber-400';
             } else {
